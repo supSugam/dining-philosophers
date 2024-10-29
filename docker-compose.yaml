@@ -1,0 +1,60 @@
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    networks:
+      - philosophers_net
+
+  philosopher1:
+    build: .
+    command: celery -A philosopher.tasks worker --loglevel=info -Q philosopher1
+    environment:
+      - PHILOSOPHER_ID=1
+    depends_on:
+      - redis
+    networks:
+      - philosophers_net
+
+  philosopher2:
+    build: .
+    command: celery -A philosopher.tasks worker --loglevel=info -Q philosopher2
+    environment:
+      - PHILOSOPHER_ID=2
+    depends_on:
+      - redis
+    networks:
+      - philosophers_net
+
+  philosopher3:
+    build: .
+    command: celery -A philosopher.tasks worker --loglevel=info -Q philosopher3
+    environment:
+      - PHILOSOPHER_ID=3
+    depends_on:
+      - redis
+    networks:
+      - philosophers_net
+
+  philosopher4:
+    build: .
+    command: celery -A philosopher.tasks worker --loglevel=info -Q philosopher4
+    environment:
+      - PHILOSOPHER_ID=4
+    depends_on:
+      - redis
+    networks:
+      - philosophers_net
+
+  philosopher5:
+    build: .
+    command: celery -A philosopher.tasks worker --loglevel=info -Q philosopher5
+    environment:
+      - PHILOSOPHER_ID=5
+    depends_on:
+      - redis
+    networks:
+      - philosophers_net
+
+networks:
+  philosophers_net:
