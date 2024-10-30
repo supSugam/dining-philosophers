@@ -3,13 +3,18 @@ import time
 import random
 from celery import Celery
 from celery.signals import worker_ready
+from kombu import Queue
 
 app = Celery('philosopher.tasks', broker=f'amqp://guest:guest@rabbitmq:5672//',backend=f'redis://redis:6379/0')
 
 PHILOSOPHER_ID = int(os.environ.get('PHILOSOPHER_ID', 1))
 app.conf.task_routes = {
-    f'philosopher.tasks.dine_{PHILOSOPHER_ID}': {'queue': f'philosopher{PHILOSOPHER_ID}'}
+    # f'philosopher.tasks.dine_{PHILOSOPHER_ID}': {'queue': f'philosopher{PHILOSOPHER_ID}'}
 }
+
+app.conf.task_queues = [
+    Queue(f'philosopher{PHILOSOPHER_ID}')
+]
 
 NUM_PHILOSOPHERS = 5
 
@@ -59,7 +64,7 @@ def start_dining():
 
 @worker_ready.connect
 def at_start(sender, **kwargs):
-    start_dining.delay()
+    start_dining.apply_async(queue=f'philosopher{PHILOSOPHER_ID}')
 
 if __name__ == '__main__':
     print(PHILOSOPHER_ID,"Philosopher ID")
