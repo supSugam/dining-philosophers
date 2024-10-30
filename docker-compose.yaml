@@ -6,6 +6,13 @@ services:
     networks:
       - philosophers_net
 
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - '5672:5672'
+    networks:
+      - philosophers_net
+
   philosopher1:
     build: .
     command: celery -A philosopher.tasks worker --loglevel=info -Q philosopher1
@@ -13,6 +20,7 @@ services:
       - PHILOSOPHER_ID=1
     depends_on:
       - redis
+      - rabbitmq
     networks:
       - philosophers_net
 
@@ -23,6 +31,7 @@ services:
       - PHILOSOPHER_ID=2
     depends_on:
       - redis
+      - rabbitmq
     networks:
       - philosophers_net
 
@@ -33,6 +42,7 @@ services:
       - PHILOSOPHER_ID=3
     depends_on:
       - redis
+      - rabbitmq
     networks:
       - philosophers_net
 
@@ -43,6 +53,7 @@ services:
       - PHILOSOPHER_ID=4
     depends_on:
       - redis
+      - rabbitmq
     networks:
       - philosophers_net
 
@@ -53,6 +64,7 @@ services:
       - PHILOSOPHER_ID=5
     depends_on:
       - redis
+      - rabbitmq
     networks:
       - philosophers_net
 
